@@ -92,13 +92,11 @@ async createItem(itemData) {
         if (!group.items) group.items = []
         group.items.push(newItem)
         board.updatedAt = new Date().toISOString()
-        return newItem
+return newItem
       }
     }
     
     throw new Error('Group not found')
-    
-    return { ...newItem }
   }
 
   async updateItem(itemId, updates) {
@@ -144,8 +142,9 @@ async createItem(itemData) {
           }
         }
       }
-    }
-throw new Error(`Item with id ${itemId} not found`)
+}
+    
+    throw new Error(`Item with id ${itemId} not found`)
   }
 
   // Comment operations
