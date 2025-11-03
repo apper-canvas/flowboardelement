@@ -198,7 +198,7 @@ const KanbanBoard = ({ board, onUpdateItem, onDeleteItem, onAddItem }) => {
                 </AnimatePresence>
                 
                 {/* Add card button */}
-                <motion.div
+<motion.div
                   className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -211,7 +211,10 @@ const KanbanBoard = ({ board, onUpdateItem, onDeleteItem, onAddItem }) => {
                       // Add item to first group for this status
                       const firstGroup = board.groups?.[0]
                       if (firstGroup) {
-                        onAddItem?.(firstGroup.Id, { status })
+                        onAddItem?.(firstGroup.Id, { 
+                          title: `New ${status} Item`,
+                          status 
+                        })
                       }
                     }}
                   >

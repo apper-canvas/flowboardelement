@@ -65,10 +65,17 @@ class BoardService {
   }
 
   // Item management methods
-  async createItem(itemData) {
+async createItem(itemData) {
     await this.delay()
+    
+    // Ensure required fields are present
+    const title = itemData.title || `New Item ${this.nextItemId}`
+    
     const newItem = {
       Id: this.nextItemId++,
+      title,
+      status: itemData.status || 'Not Started',
+      columnValues: itemData.columnValues || {},
       ...itemData,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -85,8 +92,11 @@ class BoardService {
         if (!group.items) group.items = []
         group.items.push(newItem)
         board.updatedAt = new Date().toISOString()
+        return newItem
       }
     }
+    
+    throw new Error('Group not found')
     
     return { ...newItem }
   }

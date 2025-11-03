@@ -272,10 +272,13 @@ const BoardTable = ({ board, onUpdateItem, onDeleteItem, onAddItem }) => {
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.2 }}
                     >
-                      <Button
+<Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => onAddItem?.(group.Id)}
+                        onClick={() => onAddItem?.(group.Id, { 
+                          title: `New Item ${Date.now()}`,
+                          status: 'Not Started'
+                        })}
                         className="text-gray-500 hover:text-primary hover:bg-primary/5"
                       >
                         <ApperIcon name="Plus" className="w-4 h-4 mr-2" />
