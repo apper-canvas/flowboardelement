@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useLocation } from "react-router-dom"
 import { motion } from "framer-motion"
 import { toast } from "react-toastify"
 import ApperIcon from "@/components/ApperIcon"
@@ -11,13 +12,13 @@ import Empty from "@/components/ui/Empty"
 import { boardService } from "@/services/api/boardService"
 
 const BoardList = () => {
+  const location = useLocation()
   const [boards, setBoards] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
   const [filter, setFilter] = useState("all")
   const [sortBy, setSortBy] = useState("updated")
-
   const loadBoards = async () => {
     try {
       setLoading(true)
@@ -32,9 +33,15 @@ const BoardList = () => {
     }
   }
 
-  useEffect(() => {
+useEffect(() => {
     loadBoards()
   }, [])
+
+  useEffect(() => {
+    if (location.pathname === '/recent') {
+      setFilter('recent')
+    }
+  }, [location.pathname])
 
   const handleCreateBoard = async () => {
     try {

@@ -10,9 +10,10 @@ return (
     <BrowserRouter>
       <div className="min-h-screen bg-background font-body">
         <Routes>
-          <Route path="/" element={<Layout />}>
+<Route path="/" element={<Layout />}>
             <Route index element={<BoardList />} />
             <Route path="boards" element={<BoardList />} />
+            <Route path="recent" element={<BoardList />} />
             <Route path="board/:boardId" element={<BoardView />} />
           </Route>
         </Routes>
