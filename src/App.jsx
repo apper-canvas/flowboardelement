@@ -12,8 +12,9 @@ return (
         <Routes>
 <Route path="/" element={<Layout />}>
             <Route index element={<BoardList />} />
-            <Route path="boards" element={<BoardList />} />
+<Route path="boards" element={<BoardList />} />
             <Route path="recent" element={<BoardList />} />
+            <Route path="favorites" element={<BoardList />} />
             <Route path="board/:boardId" element={<BoardView />} />
           </Route>
         </Routes>

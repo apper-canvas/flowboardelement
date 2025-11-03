@@ -37,9 +37,11 @@ useEffect(() => {
     loadBoards()
   }, [])
 
-  useEffect(() => {
+useEffect(() => {
     if (location.pathname === '/recent') {
       setFilter('recent')
+    } else if (location.pathname === '/favorites') {
+      setFilter('favorites')
     }
   }, [location.pathname])
 
