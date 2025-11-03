@@ -1,5 +1,4 @@
-import boardsData from "@/services/mockData/boards.json"
-
+import boardsData from "@/services/mockData/boards.json";
 class BoardService {
   constructor() {
     this.boards = [...boardsData]
@@ -136,8 +135,103 @@ class BoardService {
         }
       }
     }
+throw new Error(`Item with id ${itemId} not found`)
+  }
+
+  // Comment operations
+  async getComments(itemId) {
+    await this.delay()
     
-    throw new Error(`Item with id ${itemId} not found`)
+    const mockComments = [
+      {
+        Id: 1,
+        itemId: parseInt(itemId),
+        content: "Initial task setup completed. @sarah.chen please review the requirements.",
+        author: {
+          Id: 1,
+          name: "Alex Thompson",
+          email: "alex@company.com",
+          avatar: null
+        },
+        mentions: ["sarah.chen"],
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+      },
+      {
+        Id: 2,
+        itemId: parseInt(itemId),
+        content: "Thanks @alex.thompson! I've reviewed and added some feedback. @mike.rodriguez can you handle the backend integration?",
+        author: {
+          Id: 2,
+          name: "Sarah Chen",
+          email: "sarah@company.com",
+          avatar: null
+        },
+        mentions: ["alex.thompson", "mike.rodriguez"],
+        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+        updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
+      },
+      {
+        Id: 3,
+        itemId: parseInt(itemId),
+        content: "Working on it now. Should have this ready by EOD.",
+        author: {
+          Id: 3,
+          name: "Mike Rodriguez",
+          email: "mike@company.com",
+          avatar: null
+        },
+        mentions: [],
+        createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
+        updatedAt: new Date(Date.now() - 4 * 60 * 60 * 1000)
+      }
+    ]
+
+    return mockComments.filter(comment => comment.itemId === parseInt(itemId))
+  }
+
+  async addComment(itemId, content, authorId = 1) {
+    await this.delay()
+    
+    // Extract mentions from content
+    const mentionMatches = content.match(/@(\w+(?:\.\w+)*)/g) || []
+    const mentions = mentionMatches.map(match => match.substring(1))
+    
+    const newComment = {
+      Id: Math.floor(Math.random() * 10000) + 1000,
+      itemId: parseInt(itemId),
+      content,
+      author: {
+        Id: authorId,
+        name: "Current User",
+        email: "user@company.com",
+        avatar: null
+      },
+      mentions,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+
+    return newComment
+  }
+
+  async deleteComment(commentId) {
+    await this.delay()
+    return { success: true }
+  }
+
+  // Get team members for mentions
+  async getTeamMembers() {
+    await this.delay(200)
+    
+    return [
+      { Id: 1, name: "Alex Thompson", username: "alex.thompson", email: "alex@company.com" },
+      { Id: 2, name: "Sarah Chen", username: "sarah.chen", email: "sarah@company.com" },
+      { Id: 3, name: "Mike Rodriguez", username: "mike.rodriguez", email: "mike@company.com" },
+      { Id: 4, name: "Emily Davis", username: "emily.davis", email: "emily@company.com" },
+      { Id: 5, name: "David Wilson", username: "david.wilson", email: "david@company.com" },
+      { Id: 6, name: "Lisa Garcia", username: "lisa.garcia", email: "lisa@company.com" }
+    ]
   }
 }
 

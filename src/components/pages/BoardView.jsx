@@ -1,24 +1,26 @@
-import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
-import { motion } from "framer-motion"
-import { toast } from "react-toastify"
-import ApperIcon from "@/components/ApperIcon"
-import Button from "@/components/atoms/Button"
-import ViewTabs from "@/components/molecules/ViewTabs"
-import BoardTable from "@/components/organisms/BoardTable"
-import KanbanBoard from "@/components/organisms/KanbanBoard"
-import Loading from "@/components/ui/Loading"
-import Error from "@/components/ui/Error"
-import Empty from "@/components/ui/Empty"
-import { boardService } from "@/services/api/boardService"
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
+import ItemDetailModal from "@/components/organisms/ItemDetailModal";
+import { boardService } from "@/services/api/boardService";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import KanbanBoard from "@/components/organisms/KanbanBoard";
+import BoardTable from "@/components/organisms/BoardTable";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import ViewTabs from "@/components/molecules/ViewTabs";
 
 const BoardView = () => {
   const { boardId } = useParams()
   const [board, setBoard] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
-  const [activeView, setActiveView] = useState("table")
+const [activeView, setActiveView] = useState("table")
   const [showFilters, setShowFilters] = useState(false)
+  const [selectedItem, setSelectedItem] = useState(null)
   const [filters, setFilters] = useState({
     status: "",
     person: "",
@@ -44,7 +46,13 @@ const BoardView = () => {
       loadBoard()
     }
   }, [boardId])
+const handleItemClick = (item) => {
+    setSelectedItem(item)
+  }
 
+  const handleCloseModal = () => {
+    setSelectedItem(null)
+  }
   const handleUpdateItem = async (itemId, updates) => {
     try {
       // Find the item across all groups
@@ -145,12 +153,23 @@ const BoardView = () => {
   const handleViewChange = (view) => {
     setActiveView(view)
     toast.info(`Switched to ${view} view`)
-  }
+}
 
   const toggleFilters = () => {
     setShowFilters(!showFilters)
   }
 
+  const handleItemUpdate = (updatedItem) => {
+    setBoard(prev => ({
+      ...prev,
+      items: prev.items.map(item => 
+        item.Id === updatedItem.Id ? updatedItem : item
+      )
+    }))
+    if (selectedItem && selectedItem.Id === updatedItem.Id) {
+      setSelectedItem(updatedItem)
+    }
+  }
   if (loading) {
     return (
       <div className="flex-1 p-6">
@@ -260,12 +279,13 @@ const BoardView = () => {
               transition={{ duration: 0.3 }}
               className="flex-1 overflow-auto"
             >
-              {activeView === "table" && (
+{activeView === "table" && (
                 <BoardTable
                   board={board}
                   onUpdateItem={handleUpdateItem}
                   onDeleteItem={handleDeleteItem}
                   onAddItem={handleAddItem}
+                  onItemClick={handleItemClick}
                 />
               )}
               
@@ -275,6 +295,7 @@ const BoardView = () => {
                   onUpdateItem={handleUpdateItem}
                   onDeleteItem={handleDeleteItem}
                   onAddItem={handleAddItem}
+                  onItemClick={handleItemClick}
                 />
               )}
               
@@ -371,8 +392,17 @@ const BoardView = () => {
               </Button>
             </div>
           </motion.div>
-        )}
+)}
       </div>
+
+      {selectedItem && (
+        <ItemDetailModal
+          item={selectedItem}
+          board={board}
+          onClose={handleCloseModal}
+          onUpdateItem={handleItemUpdate}
+        />
+      )}
     </div>
   )
 }
