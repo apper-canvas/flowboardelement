@@ -1,10 +1,52 @@
-import { useState } from "react"
-import { NavLink, useLocation } from "react-router-dom"
-import { motion, AnimatePresence } from "framer-motion"
-import ApperIcon from "@/components/ApperIcon"
-import { cn } from "@/utils/cn"
+import React, { useState } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { toast } from "react-toastify";
+import { boardService } from "@/services/api/boardService";
+import ApperIcon from "@/components/ApperIcon";
+import { cn } from "@/utils/cn";
+
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const navigate = useNavigate()
+  const [isCreatingBoard, setIsCreatingBoard] = useState(false)
+
+  const handleCreateBoard = async () => {
+    if (isCreatingBoard) return
+    
+    try {
+      setIsCreatingBoard(true)
+      const newBoard = {
+        name: "New Board",
+        description: "A fresh board ready for your next project",
+        columns: [
+          { id: "item", title: "Item", type: "text", width: 200 },
+          { id: "status", title: "Status", type: "status", width: 150 },
+          { id: "person", title: "Person", type: "person", width: 150 },
+          { id: "date", title: "Due Date", type: "date", width: 130 }
+        ],
+        groups: [
+          {
+            id: "group1",
+            title: "New Group",
+            color: "#0073ea",
+            collapsed: false,
+            items: []
+          }
+        ]
+      }
+      
+      const createdBoard = await boardService.create(newBoard)
+      toast.success("Board created successfully!")
+      navigate(`/board/${createdBoard.Id}`)
+      if (onClose) onClose() // Close sidebar on mobile after creating
+    } catch (err) {
+      toast.error("Failed to create board")
+      console.error("Error creating board:", err)
+    } finally {
+      setIsCreatingBoard(false)
+    }
+  }
   const location = useLocation()
   const [expandedSections, setExpandedSections] = useState(["workspace"])
 
@@ -65,9 +107,22 @@ const Sidebar = ({ isOpen, onClose }) => {
 
       {/* Create Board Button */}
       <div className="p-4">
-        <button className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-medium hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
-          <ApperIcon name="Plus" className="w-4 h-4" />
-          <span>Create Board</span>
+<button 
+          onClick={handleCreateBoard}
+          disabled={isCreatingBoard}
+          className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-medium hover:shadow-lg transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isCreatingBoard ? (
+            <>
+              <ApperIcon name="Loader2" className="w-4 h-4 animate-spin" />
+              <span>Creating...</span>
+            </>
+          ) : (
+            <>
+              <ApperIcon name="Plus" className="w-4 h-4" />
+              <span>Create Board</span>
+            </>
+          )}
         </button>
       </div>
 
